@@ -1,0 +1,172 @@
+{% extends 'base.html' %} 
+{% load static %} 
+{% block title %}QuizMaster - Learn,Test, Excel{% endblock %} 
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section text-white text-center py-5">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-lg-6">
+        <h1 class="display-4 fw-bold mb-4">
+          Master Any Topic, One Quiz at a Time
+        </h1>
+        <p class="lead mb-4">
+          Join thousands of learners perfecting their skills through
+          intelligent, adaptive quizzes powered by cutting-edge technology.
+        </p>
+        <div class="d-flex gap-3 justify-content-center flex-wrap">
+          <a href="/signup" class="btn btn-lg btn-primary-custom fw-bold"
+            >Get Started Free</a
+          >
+          <a href="#topics" class="btn btn-lg btn-secondary-custom fw-bold"
+            >Explore Topics</a
+          >
+        </div>
+      </div>
+      <div class="col-lg-6 d-none d-lg-block">
+        <div class="position-relative">
+          <div class="hero-shape"></div>
+          <div class="hero-icon">📚</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Topics Section -->
+<section id="topics" class="py-5 topics-section">
+  <div class="container">
+    <h2 class="text-center fw-bold mb-5 section-title">Featured Topics</h2>
+    <div class="row g-4">
+      {% if quizzes %} 
+        {% for quiz in quizzes %} 
+            <div class="col-md-6 col-lg-4">
+                <div
+                class="card card-custom {% if forloop.counter0|add:1|divisibleby:6 %}card-color-6 {% elif forloop.counter0|add:1|divisibleby:5 %}card-color-5 {% elif forloop.counter0|add:1|divisibleby:4 %}card-color-4 {% elif forloop.counter0|add:1|divisibleby:3 %}card-color-3 {% elif forloop.counter0|add:1|divisibleby:2 %}card-color-2 {% else %}card-color-1{% endif %}"
+                >
+                <div class="card-body text-center">
+                    <div class="card-icon">📚</div>
+                    <h5 class="card-title fw-bold">{{ quiz.title }}</h5>
+                    <p class="text-muted small">
+                    {{ quiz.description|truncatechars:100 }}
+                    </p>
+                    <a
+                    href="/quiz/{{ quiz.id }}/attempt"
+                    class="btn btn-sm btn-primary fw-bold"
+                    >Start Quiz →</a
+                    >
+                </div>
+                </div>
+            </div>
+        {% endfor %} 
+      {% else %}
+      <p class="text-center">No quizzes available at the moment.</p>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<!-- Trust Section -->
+<section id="trust" class="py-5 trust-section">
+  <div class="container">
+    <h2 class="text-center fw-bold mb-5 section-title">Trusted by Thousands</h2>
+    <div class="row text-center g-4">
+      <div class="col-md-4">
+        <div class="stat-number">50K+</div>
+        <p class="stat-label">Active Learners</p>
+      </div>
+      <div class="col-md-4">
+        <div class="stat-number">500+</div>
+        <p class="stat-label">Quiz Questions</p>
+      </div>
+      <div class="col-md-4">
+        <div class="stat-number">95%</div>
+        <p class="stat-label">Success Rate</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- About Section -->
+<section id="about" class="py-5 about-section">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-lg-6">
+        <h2 class="fw-bold mb-4 section-title">About QuizMaster</h2>
+        <p class="text-body">
+          QuizMaster is built by educators and developers passionate about
+          making learning accessible to everyone. We combine cutting-edge
+          technology with proven pedagogical methods to create quizzes that not
+          only test knowledge but also enhance learning retention.
+        </p>
+        <p class="text-body">
+          Our platform uses adaptive learning algorithms to personalize each
+          user's quiz experience, ensuring optimal difficulty and maximum
+          engagement.
+        </p>
+        <div class="d-flex gap-3 mt-4">
+          <a href="#contact" class="btn btn-primary-custom fw-bold"
+            >Get In Touch</a
+          >
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="about-box">
+          <p class="about-icon">🎯</p>
+          <p class="about-text">Learning Made Intelligent</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Contact Section -->
+<section id="contact" class="py-5 contact-section">
+  <div class="container">
+    <h2 class="text-center fw-bold mb-5 section-title-light">Contact Us</h2>
+    <div class="row">
+      <div class="col-lg-8 mx-auto">
+        <form method="POST" action="{% url 'quizzes:contact_submit' %}">
+          {% csrf_token %}
+          <div class="mb-3">
+            <label for="name" class="form-label">Full Name</label>
+            <input
+              type="text"
+              class="form-control form-control-custom"
+              id="name"
+              name="name"
+              required
+            />
+          </div>
+          <div class="mb-3">
+            <label for="email" class="form-label">Email Address</label>
+            <input
+              type="email"
+              class="form-control form-control-custom"
+              id="email"
+              name="email"
+              required
+            />
+          </div>
+          <div class="mb-3">
+            <label for="message" class="form-label">Message</label>
+            <textarea
+              class="form-control form-control-custom"
+              id="message"
+              name="message"
+              rows="5"
+              required
+            ></textarea>
+          </div>
+          <button
+            type="submit"
+            class="btn btn-lg btn-primary-custom w-100 fw-bold"
+          >
+            Send Message
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

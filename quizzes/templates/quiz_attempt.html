@@ -1,0 +1,187 @@
+{% extends 'base.html' %} {% load static %} 
+{% block title %}Attempt Quiz -QuizMaster{% endblock %}  {% block content %}
+<div class="quiz-container">
+  <div class="container">
+    <div class="quiz-card">
+      <!-- Quiz Header -->
+      <div class="quiz-header">
+        <div class="quiz-title">{{ quiz.title }}</div>
+        <div class="timer" id="timer">
+          <span>⏱️</span>
+          <span id="timeDisplay">30:00</span>
+        </div>
+      </div>
+
+      <!-- Progress Section -->
+      <div class="progress-section">
+        <div class="progress-text">
+          <span id="progressLabel">Question 1 of {{ questions|length }}</span>
+          <span id="progressPercent">0%</span>
+        </div>
+        <div class="progress">
+          <div class="progress-bar" id="progressBar"></div>
+        </div>
+      </div>
+
+      <!-- Question Section -->
+      <div class="question-section">
+        <div class="question-number" id="questionNum">Question 1</div>
+        <div class="question-text" id="questionText"></div>
+
+        <div class="options-container" id="optionsContainer"></div>
+      </div>
+
+      <!-- Question Indicators -->
+      <div class="question-indicator" id="questionIndicator"></div>
+
+      <!-- Navigation -->
+      <div class="quiz-navigation">
+        <button
+          id="prevBtn"
+          class="btn-nav btn-prev"
+          style="display: none"
+          onclick="previousQuestion()"
+        >
+          ← Previous
+        </button>
+        <button id="nextBtn" class="btn-nav btn-next" onclick="nextQuestion()">
+          Next →
+        </button>
+      </div>
+
+      <!-- Submit Button -->
+      <div id="submitContainer" style="display: none; margin-top: 20px">
+        <button class="btn-nav btn-submit" onclick="submitQuiz()">
+          Submit Quiz
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %} {% block extra_js %}
+<script>
+  const quizData = [
+      {% for question in questions %}
+      {
+          id: {{ question.id }},
+          text: "{{ question.text|escapejs }}",
+          answers: [
+              {% for answer in question.answers.all %}
+              { id: {{ answer.id }}, text: "{{ answer.text|escapejs }}", is_correct: {{ answer.is_correct|yesno:"true,false" }} }{% if not forloop.last %},{% endif %}
+              {% endfor %}
+          ]
+      }{% if not forloop.last %},{% endif %}
+      {% endfor %}
+  ];
+
+  let currentQuestion = 0;
+  let answers = {};
+  let timerInterval;
+
+  function initQuiz() {
+      createIndicators(quizData.length);
+      loadQuestion();
+      startTimer(quizData.length * 10);
+  }
+
+  function createIndicators(totalQuestions) {
+      const container = document.getElementById('questionIndicator');
+      container.innerHTML = '';
+      for (let i = 0; i < totalQuestions; i++) {
+          const dot = document.createElement('div');
+          dot.className = 'indicator-dot' + (i === 0 ? ' current' : '');
+          dot.dataset.q = i;
+          dot.textContent = i + 1;
+          dot.addEventListener('click', () => {
+              currentQuestion = i;
+              loadQuestion();
+          });
+          container.appendChild(dot);
+      }
+  }
+
+  function loadQuestion() {
+      const question = quizData[currentQuestion];
+      document.getElementById('questionNum').textContent = `Question ${currentQuestion + 1}`;
+      document.getElementById('questionText').textContent = question.text;
+      document.getElementById('progressLabel').textContent = `Question ${currentQuestion + 1} of ${quizData.length}`;
+      const percent = Math.round((currentQuestion + 1) / quizData.length * 100);
+      document.getElementById('progressPercent').textContent = `${percent}%`;
+      document.getElementById('progressBar').style.width = percent + '%';
+
+      const optionsContainer = document.getElementById('optionsContainer');
+      optionsContainer.innerHTML = '';
+      question.answers.forEach((answer, idx) => {
+          const label = document.createElement('label');
+          label.className = 'option';
+          if (answers[question.id] === answer.id) label.classList.add('selected');
+          label.innerHTML = `<input type="radio" name="answer" value="${answer.id}" ${answers[question.id]===answer.id?'checked':''}><span class="option-text">${answer.text}</span>`;
+          label.addEventListener('click', e => {
+              e.preventDefault();
+              selectAnswer(question.id, answer.id);
+          });
+          optionsContainer.appendChild(label);
+      });
+
+      document.getElementById('prevBtn').style.display = currentQuestion > 0 ? 'inline-block' : 'none';
+      document.getElementById('nextBtn').style.display = currentQuestion < quizData.length - 1 ? 'inline-block' : 'none';
+      document.getElementById('submitContainer').style.display = currentQuestion === quizData.length - 1 ? 'block' : 'none';
+
+      updateIndicators();
+  }
+
+  function selectAnswer(qId, aId) {
+      answers[qId] = aId;
+      loadQuestion();
+  }
+
+  function updateIndicators() {
+      document.querySelectorAll('.indicator-dot').forEach(dot => {
+          const qIndex = parseInt(dot.dataset.q);
+          const question = quizData[qIndex];
+          dot.className = 'indicator-dot';
+          if (qIndex === currentQuestion) dot.classList.add('current');
+          else if (answers[question.id] !== undefined) dot.classList.add('answered');
+          else if (qIndex < currentQuestion) dot.classList.add('visited');
+      });
+  }
+
+  function previousQuestion() { if (currentQuestion > 0) { currentQuestion--; loadQuestion(); } }
+  function nextQuestion() { if (currentQuestion < quizData.length - 1) { currentQuestion++; loadQuestion(); } }
+
+  function startTimer(totalSeconds) {
+      const startTime = Date.now();
+      timerInterval = setInterval(() => {
+          const elapsed = Math.floor((Date.now() - startTime)/1000);
+          const remaining = Math.max(0, totalSeconds - elapsed);
+          const minutes = Math.floor(remaining/60);
+          const seconds = remaining % 60;
+          document.getElementById('timeDisplay').textContent = `${minutes}:${seconds.toString().padStart(2,'0')}`;
+          if (remaining <= 0) { clearInterval(timerInterval); submitQuiz(); }
+      }, 1000);
+  }
+
+  function submitQuiz() {
+      fetch("{% url 'quizzes:submit_quiz' quiz.id %}", {
+    // ← quiz.id must exist
+          method: "POST",
+          headers: {
+              "Content-Type": "application/json",
+              "X-CSRFToken": "{{ csrf_token }}"
+          },
+          body: JSON.stringify({ answers })
+      })
+      .then(res => res.json())
+      .then(data => {
+          if (data.success) {
+              window.location.href = data.redirect_url;
+          }
+      })
+      .catch(err => console.error(err));
+  }
+
+
+
+  document.addEventListener('DOMContentLoaded', initQuiz);
+</script>
+{% endblock %}

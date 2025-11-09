@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block title %}Start Quiz - QuizMaster{% endblock %}
+
+
+
+{% block content %}
+
+<section id="topics" class="py-5">
+    <div class="container">
+        <h2 class="text-center fw-bold mb-5 mt-10" style="font-size: 2.5rem; color: #1e1b4b;">Choose Your Topic</h2>
+        <div class="row g-4">
+
+    {% if quizzes %}
+        {% for quiz in quizzes %}
+                <div class="col-md-6 col-lg-4">
+                        <div class="card card-custom
+                            {% if forloop.counter0|add:1|divisibleby:6 %}card-color-6
+                            {% elif forloop.counter0|add:1|divisibleby:5 %}card-color-5
+                            {% elif forloop.counter0|add:1|divisibleby:4 %}card-color-4
+                            {% elif forloop.counter0|add:1|divisibleby:3 %}card-color-3
+                            {% elif forloop.counter0|add:1|divisibleby:2 %}card-color-2
+                            {% else %}card-color-1{% endif %}
+                        ">
+                    <div class="card-body text-center">
+                        <div style="font-size:48px;color:#3b82f6;">📚</div>
+                        <h5>{{quiz.title}}</h5>
+                        <p class="text-muted small">{{quiz.description}}</p>
+                        <span class="badge bg-primary mb-2">{{ quiz.questions.count }} Questions</span>
+                        <a href="/quiz/{{ quiz.id }}/attempt" class="btn btn-sm btn-primary fw-bold">Start Quiz →</a>
+                    </div>
+                
+                </div>
+            </div>
+
+        {% endfor %}
+    {% else %}
+        <p class="text-center">No quizzes available at the moment. Please check back later.</p>
+    {% endif %}
+
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function startQuiz(topicName, topicId) {
+    localStorage.setItem('selectedTopic', topicName);
+    localStorage.setItem('topicId', topicId);
+    window.location.href = "";
+}
+</script>
+{% endblock %}

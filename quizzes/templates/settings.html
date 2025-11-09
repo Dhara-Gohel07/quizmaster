@@ -1,0 +1,67 @@
+{% extends 'base.html' %} 
+{% load static %} 
+{% block title %}Settings -QuizMaster{% endblock %} 
+{% block content %}
+<div class="container mt-5 pt-5">
+  <div class="card card-dashboard p-4">
+    <h3 class="mb-4 text-center text-primary">Account Settings</h3>
+
+    <form method="POST" action="">
+      {% csrf_token %}
+
+      <div class="row mb-3">
+        <div class="col-md-6">
+          <label class="form-label">Username</label>
+          <input
+            type="text"
+            name="username"
+            class="form-control form-control-custom"
+            value="{{ user.username }}"
+            readonly
+          />
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Email</label>
+          <input
+            type="email"
+            name="email"
+            class="form-control form-control-custom"
+            value="{{ user.email }}"
+            readonly
+          />
+        </div>
+      </div>
+
+      <hr class="my-4" />
+
+      <h5 class="text-secondary mb-3">Change Password</h5>
+      <div class="row mb-3">
+        <div class="col-md-6">
+          <label class="form-label">New Password</label>
+          <input
+            type="password"
+            name="new_password"
+            class="form-control form-control-custom"
+            placeholder="Enter new password"
+          />
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Confirm Password</label>
+          <input
+            type="password"
+            name="confirm_password"
+            class="form-control form-control-custom"
+            placeholder="Confirm new password"
+          />
+        </div>
+      </div>
+
+      <div class="text-center mt-4">
+        <button type="submit" class="btn btn-primary-custom px-5">
+          Update
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,47 @@
+{% extends 'base.html' %} {% load static %} {% block title %}Quiz Result -
+QuizMaster{% endblock %} {% block content %}
+<div class="container mt-5 pt-5">
+  <div
+    class="card card-dashboard shadow-lg text-center p-5 mx-auto"
+    style="max-width: 600px; border-radius: 20px"
+  >
+    <!-- Title -->
+    <h2 class="fw-bold text-primary mb-3">🎯 Quiz Results</h2>
+    <p class="text-muted mb-4">Here’s how you performed in this quiz</p>
+
+    <!-- Score Display -->
+    <div
+      class="result-score py-4 mb-4"
+      style="
+        background: linear-gradient(135deg, #007bff, #00b4d8);
+        border-radius: 15px;
+        color: white;
+      "
+    >
+      <h3 class="fw-bold mb-0">{{ score }} / {{ total }}</h3>
+      <p class="mb-0">Your Score</p>
+    </div>
+
+    <!-- Feedback Message -->
+    {% if score_percentage >= 80 %}
+    <p class="text-success fw-semibold fs-5">🎉 Excellent! You nailed it!</p>
+    {% elif score_percentage >= 50 %}
+    <p class="text-warning fw-semibold fs-5">👍 Good job! Keep improving!</p>
+    {% else %}
+    <p class="text-danger fw-semibold fs-5">
+      😕 Don’t worry, try again to improve!
+    </p>
+    {% endif %}
+
+    <!-- Buttons -->
+    <div class="mt-4 d-flex justify-content-center gap-3">
+      <a href="/quiz" class="btn btn-primary-custom px-4 py-2">
+        <i class="fas fa-redo"></i> Try Another Quiz
+      </a>
+      <a href="/" class="btn btn-outline-dark px-4 py-2">
+        <i class="fas fa-home"></i> Go Home
+      </a>
+    </div>
+  </div>
+</div>
+{% endblock %}

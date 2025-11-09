@@ -1,0 +1,185 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      {% block title %}QuizMaster - Learn, Test, Excel{% endblock %}
+    </title>
+    <!-- Bootstrap Icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
+    />
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
+    {% block extra_css %}{% endblock %}
+  </head>
+
+  <body class="font-sans">
+    <!--  Navigation -->
+    <nav
+      class="navbar navbar-expand-lg navbar-dark shadow-sm fixed-top quiz-navbar"
+    >
+      <div class="container">
+        <a class="navbar-brand fw-bold" href="/">
+          <span class="brand-quiz">Quiz</span
+          ><span class="brand-master">Master</span>
+        </a>
+
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+          aria-controls="navbarNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div
+          class="collapse navbar-collapse justify-content-end"
+          id="navbarNav"
+        >
+          <ul class="navbar-nav align-items-center gap-2">
+            <li class="nav-item">
+              <a
+                class="nav-link {% if request.path == '/' %}active{% endif %}"
+                href="/"
+                >Home</a
+              >
+            </li>
+
+            <li class="nav-item">
+              <a
+                class="nav-link {% if 'quiz' in request.path %}active{% endif %}"
+                href="/quiz"
+                >Quizzes</a
+              >
+            </li>
+
+            <li class="nav-item">
+              <a
+                class="nav-link {% if 'events' in request.path %}active{% endif %}"
+                href="/events"
+              >
+                Events</a
+              >
+            </li>
+
+            <li class="nav-item">
+              <a
+                class="nav-link {% if '#about' in request.path %}active{% endif %}"
+                href="/#about"
+                >About</a
+              >
+            </li>
+
+            <li class="nav-item">
+              <a
+                class="nav-link {% if '#contact' in request.path %}active{% endif %}"
+                href="/#contact"
+                >Contact</a
+              >
+            </li>
+
+            {% if user.is_authenticated and not user.is_staff %}
+            <!-- User logged in normal user, not admin -->
+            <li class="nav-item dropdown">
+              <a
+                class="nav-link dropdown-toggle"
+                href="#"
+                id="userDropdown"
+                role="button"
+                data-bs-toggle="dropdown"
+              >
+                {{ user.username }}
+              </a>
+              <ul
+                class="dropdown-menu dropdown-custom"
+                aria-labelledby="userDropdown"
+              >
+                <li><a class="dropdown-item" href="/profile/">Profile</a></li>
+                <li><a class="dropdown-item" href="/settings/">Settings</a></li>
+                <li><hr class="dropdown-divider" /></li>
+                <li>
+                  <form
+                    id="logout-form"
+                    action="{% url 'quizzes:logout' %}"
+                    method="POST"
+                    style="display: inline"
+                  >
+                    {% csrf_token %}
+                    <button type="submit" class="dropdown-item">Logout</button>
+                  </form>
+                </li>
+              </ul>
+            </li>
+
+            {% elif request.path|slice:":7" != "/admin/" %}
+            <!-- If not logged in AND not in admin -->
+            <a
+              class="btn btn-outline-light me-2 {% if 'login' in request.path %}active{% endif %}"
+              href="{% url 'quizzes:login' %}"
+              >Login</a
+            >
+            <a
+              class="btn btn-primary-custom {% if 'signup' in request.path %}active{% endif %}"
+              href="{% url 'quizzes:signup' %}"
+              >Sign Up</a
+            >
+
+            {% endif %}
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Page Content -->
+    <main class="pt-3">{% block content %}{% endblock %}</main>
+
+    <!--  Footer -->
+    <footer class="py-4 footer-custom">
+      <div class="container">
+        <div class="row g-4 mb-4">
+          <div class="col-md-4">
+            <h6 class="fw-bold mb-3">QuizMaster</h6>
+            <p class="small">
+              Making learning accessible through intelligent, adaptive quizzes.
+            </p>
+          </div>
+          <div class="col-md-4">
+            <h6 class="fw-bold mb-3">Quick Links</h6>
+            <ul class="list-unstyled small">
+              <li><a href="/#about">About</a></li>
+              <li><a href="/#contact">Contact</a></li>
+              <li><a href="/#topics">Topic</a></li>
+            </ul>
+          </div>
+          <div class="col-md-4">
+            <h6 class="fw-bold mb-3">Pages</h6>
+            <ul class="list-unstyled small">
+              <li><a href="/quiz">Quiz</a></li>
+              <li><a href="/events">Eents</a></li>
+            </ul>
+          </div>
+        </div>
+        <hr class="footer-divider" />
+        <p class="text-center mb-0 small">
+          &copy; 2025 QuizMaster. All rights reserved.
+        </p>
+      </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static 'js/main.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+  </body>
+</html>

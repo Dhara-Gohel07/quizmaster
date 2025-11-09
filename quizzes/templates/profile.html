@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Profile - QuizMaster{% endblock %}
+
+{% block content %}
+<div class="container mt-5 pt-5">
+    <h2 class="text-center mb-4 text-primary">My Profile</h2>
+
+    <!-- Profile Card -->
+    <div class="card card-dashboard text-center p-4 mb-4">
+        <div class="avatar mx-auto mb-3">
+            {{ user.username|first|upper }}
+        </div>
+        <h3 class="fw-bold" style="color: #c02289ff;">{{ user.username }}</h3>
+        <p class="text-secondary" style="color: blue !important;">{{ user.email }}</p>
+
+
+
+        <div class="d-flex justify-content-center gap-3 mt-3 ml-3">
+            <button id="edit-btn" class="btn btn-primary-custom">
+                <i class="fas fa-edit"></i> Edit Profile
+            </button>
+        
+        </div>
+    </div>
+
+    <!-- Personal Info -->
+    <div class="card card-dashboard p-4 mb-4">
+        <h4 class="text-secondary mb-3">Personal Information</h4>
+        <form method="POST" action="">
+            {% csrf_token %}
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label class="form-label">First Name</label>
+                    <input type="text" id="first_name" class="form-control form-control-custom"
+                           name="first_name" value="{{ user.first_name }}" disabled>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Last Name</label>
+                    <input type="text" id="last_name" class="form-control form-control-custom"
+                           name="last_name" value="{{ user.last_name }}" disabled>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Email</label>
+                <input type="email" class="form-control form-control-custom"
+                       name="email" value="{{ user.email }}" readonly>
+            </div>
+            
+            <div class="text-center mt-3">
+                <button type="submit" id="save-btn" class="btn btn-primary-custom px-5 d-none">Save Changes</button>
+            </div>
+        </form>
+    </div>
+
+   
+   
+</div>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const editBtn = document.getElementById("edit-btn");
+    const saveBtn = document.getElementById("save-btn");
+    const editableFields = ["first_name", "last_name"];  
+
+    editBtn.addEventListener("click", function() {
+        editableFields.forEach(id => document.getElementById(id).disabled = false);
+        saveBtn.classList.remove("d-none");
+        editBtn.disabled = true;
+    });
+});
+</script>
+
+{% endblock %}
