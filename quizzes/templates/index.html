@@ -15,10 +15,10 @@
           intelligent, adaptive quizzes powered by cutting-edge technology.
         </p>
         <div class="d-flex gap-3 justify-content-center flex-wrap">
-          <a href="/signup" class="btn btn-lg btn-primary-custom fw-bold"
+          <a href="/signup/" class="btn btn-lg btn-primary-custom fw-bold"
             >Get Started Free</a
           >
-          <a href="#topics" class="btn btn-lg btn-secondary-custom fw-bold"
+          <a href="{% url 'quizzes:home' %}#topics" class="btn btn-lg btn-secondary-custom fw-bold"
             >Explore Topics</a
           >
         </div>
@@ -51,7 +51,7 @@
                     {{ quiz.description|truncatechars:100 }}
                     </p>
                     <a
-                    href="/quiz/{{ quiz.id }}/attempt"
+                    href="/quiz/{{ quiz.id }}/attempt/"
                     class="btn btn-sm btn-primary fw-bold"
                     >Start Quiz →</a
                     >
@@ -105,7 +105,7 @@
           engagement.
         </p>
         <div class="d-flex gap-3 mt-4">
-          <a href="#contact" class="btn btn-primary-custom fw-bold"
+          <a href="{% url 'quizzes:home' %}#contact"class="btn btn-primary-custom fw-bold"
             >Get In Touch</a
           >
         </div>

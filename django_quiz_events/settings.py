@@ -10,7 +10,10 @@ SECRET_KEY = 'django-insecure-s4_k@ez$7ozq@me$so^poeu$d4l0t__mkyu8em!ugoaef^)(=^
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
+
+CSRF_TRUSTED_ORIGINS = ['https://*.devtunnel.com']
+
 
 
 # Application definition
@@ -130,3 +133,5 @@ MESSAGE_TAGS = {
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/dashboard/'
 LOGOUT_REDIRECT_URL = '/login/'
+
+APPEND_SLASH = False
